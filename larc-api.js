@@ -1,9 +1,12 @@
 const GET_USERS = 'GET USERS {0}:{1}';
+const GET_MESSAGE = 'GET MESSAGE {0}:{1}';
+const SEND_MESSAGE = 'SEND MESSAGE {0}:{1}:{2}:{3}';
+
+const GET_PLAYERS = 'GET PLAYERS {0}:{1}';
+const GET_CARD = 'GET PLAYERS {0}:{1}';
+const SEND_GAME = 'SEND GAME {0}:{1}:{2}';
 
 var validateParams = function (req, res, params) {
-	console.log('params:');
-	console.log(params);
-	var p = '';
 	for (i = 0; i < params.length; i++) {
 		if (!req.body.hasOwnProperty(params[i])) {
 			res.status(500).send({ error: 'Parâmetro "{0}" não informado.'.format([params[i]]) } );
@@ -16,7 +19,7 @@ var validateParams = function (req, res, params) {
 
 var handleRequest = function (req, res, larcClient, params, request, handleResponse, udp) {
 	var body = req.body;
-	console.log('Requisição recebida: ');
+	console.log('Requisição recebida do cliente: ');
 	console.log(body);
 	if (!validateParams(req, res, params)) {
 		return;
@@ -24,21 +27,25 @@ var handleRequest = function (req, res, larcClient, params, request, handleRespo
 
 	var handler = function(data, client) {
 		var response = {};
-		response.userid = body.userid;		
-		var strData = data.toString('utf8');
-		handleResponse(strData, response);
-		console.log('Resposta: ');
+		response.userid = body.userid;
+		if (!udp) {
+			data = data.toString('utf8');
+		};
+		console.log('Resposta do LARC:');
+		console.log(data);
+		handleResponse(data, response);
+		console.log('Resposta enviada ao cliente: ');
 		console.log(response);
 		client.res.send(response);
 	};
 
 	var sendRequest = function (client) {
-		console.log('Requisição enviada: ' + request)
+		console.log('Requisição enviada ao LARC: ' + request);
 		client.write(request);		
 	};	
 
 	if (udp) {	
-		larcClient.sendUDP(body.userid, req, res, handler, sendRequest);
+		larcClient.sendUDP(body.userid, req, res, handler, request);
 	} else {
 		larcClient.sendTCP(body.userid, req, res, handler, sendRequest);
 	}
@@ -65,5 +72,84 @@ module.exports = {
 					GET_USERS.format([body.userid, body.password]),
 					handleResponse,
 					false);		
-	}
+	},
+	getMessage: function (req, res, larcClient) {
+		var body = req.body;
+		var handleResponse = function (data, response) {
+			response.messages = [];
+			var arrData = data.split(':');				
+			if (arrData.length > 1) {
+				var message = {};
+				message.userid = arrData[0];
+				message.msg = arrData.slice(1).join(':');
+				response.messages.push(message);
+			};
+		};
+
+		handleRequest(req, res, larcClient, 
+					['userid', 'password'], 
+					GET_MESSAGE.format([body.userid, body.password]),
+					handleResponse,
+					false);		
+	},
+	sendMessage: function (req, res, larcClient) {
+		var body = req.body;
+		var handleResponse = function (data, response) {
+			response.status = 'ok';
+		};
+
+		handleRequest(req, res, larcClient, 
+					['userid', 'password', 'targetuserid', 'msg'], 
+					SEND_MESSAGE.format([body.userid, body.password, body.targetuserid, body.msg]),
+					handleResponse,
+					true);		
+	},
+	getPlayers: function (req, res, larcClient) {
+		var body = req.body;
+		var handleResponse = function (data, response) {
+			response.players = [];
+			var arrData = data.split(':');				
+			for (; arrData.length > 1;) {
+				var players = {};
+				players.userid = arrData[0];
+				players.status = arrData[1];
+				response.players.push(players);
+				arrData = arrData.slice(2);
+			};
+		};
+
+		handleRequest(req, res, larcClient, 
+					['userid', 'password'], 
+					GET_PLAYERS.format([body.userid, body.password]),
+					handleResponse,
+					false);		
+	},
+	getCard: function (req, res, larcClient) {
+		var body = req.body;
+		var handleResponse = function (data, response) {
+			var arrData = data.split(':');				
+			if (arrData.length > 1) {
+				response.num = arrData[0];
+				response.suit = arrData[1];
+			};
+		};
+
+		handleRequest(req, res, larcClient, 
+					['userid', 'password'], 
+					GET_CARD.format([body.userid, body.password]),
+					handleResponse,
+					false);		
+	},
+	sendGame: function (req, res, larcClient) {
+		var body = req.body;
+		var handleResponse = function (data, response) {
+			response.status = 'ok';
+		};
+
+		handleRequest(req, res, larcClient, 
+					['userid', 'password', 'msg'], 
+					SEND_GAME.format([body.userid, body.password, body.msg]),
+					handleResponse,
+					true);		
+	}	
 };

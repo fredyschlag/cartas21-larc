@@ -27,208 +27,32 @@ String.prototype.format.regex = new RegExp("{-?[0-9]+}", "g");
 app.use(bodyParser.json());       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
-const GET_MESSAGE = 'GET MESSAGE {0}:{1}';
-const SEND_MESSAGE = 'SEND MESSAGE {0}:{1}:{2}:{3}';
-
-const GET_PLAYERS = 'GET PLAYERS {0}:{1}';
-const GET_CARD = 'GET PLAYERS {0}:{1}';
-const SEND_GAME = 'SEND GAME {0}:{1}:{2}';
-
 var server = app.listen(1012, function () {
    var host = server.address().address;
    var port = server.address().port;
    console.log('Listening at http://%s:%s', host, port)
 });
 
-app.post("/users", function(req, res) {
+app.post("/getusers", function(req, res) {
 	larcAPI.getUsers(req, res, larcClient);
 });
 
 app.post("/getmessage", function(req, res) {
-	var body = req.body;
-	console.log('Requisição recebida: ');
-	console.log(body);
-	if (!body.userid) {
-		res.status(500).send({ error: 'Id não informado.' } );
-		return;
-	};
-	
-	if (!body.password) {
-		res.status(500).send({ error: 'Senha não informada.' } );
-		return;
-	};
-
-	var handleGetMessage = function(data, client) {
-		var response = {};
-		response.userid = body.userid;		
-		response.messages = []; 
-		var strData = data.toString('utf8');
-		var arrData = strData.split(':');				
-		if (arrData.length > 1) {
-			var message = {};
-			message.userid = arrData[0];
-			message.msg = arrData.slice(1).join(':');
-			response.messages.push(message);
-		};
-		console.log('Resposta: ');
-		console.log(response);
-		client.res.send(response);	
-	};
-
-	var sendGetMessage = function (client) {
-		var sendStr = GET_MESSAGE.format([body.userid, body.password]);
-		console.log('Requisição enviada: ' + sendStr)
-		client.write(sendStr);		
-	};	
-
-	larcClient.sendTCP(body.userid, req, res, handleGetMessage, sendGetMessage); 	
+	larcAPI.getMessage(req, res, larcClient);
 });
 
 app.post("/sendmessage", function(req, res) {
-	var body = req.body;
-	console.log('Requisição recebida: ');
-	console.log(body);
-	if (!body.userid) {
-		res.status(500).send({ error: 'Id não informado.' } );
-		return;
-	};
-	
-	if (!body.password) {
-		res.status(500).send({ error: 'Senha não informada.' } );
-		return;
-	};
-
-	if (!body.targetuserid) {
-		res.status(500).send({ error: 'Id do destinatário não informado.' } );
-		return;
-	};
-	
-	if (!body.msg) {
-		res.status(500).send({ error: 'Mensagem não informada.' } );
-		return;
-	};	
-
-	var handleSendMessage = function(data, client) {
-		var response = { status: 'ok' };		
-		console.log('handleSendMessage.data: ');
-		console.log(data);
-		console.log('Resposta: ');
-		console.log(response);
-		client.res.send(response);	
-	};	
-
-	var sendStr = SEND_MESSAGE.format([body.userid, body.password, body.targetuserid, body.msg]);
-	console.log('Requisição enviada: ' + sendStr);
-	larcClient.sendUDP(body.userid, req, res, handleSendMessage, sendStr);
+	larcAPI.sendMessage(req, res, larcClient);
 });
 
-app.post("/players", function(req, res) {
-	var body = req.body;
-	console.log('Requisição recebida: ');
-	console.log(body);
-	if (!body.userid) {
-		res.status(500).send({ error: 'Id não informado.' } );
-		return;
-	};
-	
-	if (!body.password) {
-		res.status(500).send({ error: 'Senha não informada.' } );
-		return;
-	};
-
-	var handleGetPlayers = function(data, client) {
-		var response = {};
-		response.userid = body.userid;
-		response.players = [];
-		var strData = data.toString('utf8');
-		var arrData = strData.split(':');				
-		for (; arrData.length > 1;) {
-			var players = {};
-			players.userid = arrData[0];
-			players.status = arrData[1];
-			response.players.push(players);
-			arrData = arrData.slice(2);
-		};
-		console.log('Resposta: ');
-		console.log(response);
-		client.res.send(response);
-	};
-
-	var sendGetPlayers = function (client) {
-		var sendStr = GET_PLAYERS.format([body.userid, body.password]);
-		console.log('Requisição enviada: ' + sendStr)
-		client.write(sendStr);		
-	};	
-
-	larcClient.sendTCP(body.userid, req, res, handleGetPlayers, sendGetPlayers); 	
+app.post("/getplayers", function(req, res) {
+	larcAPI.getPlayers(req, res, larcClient);
 });
 
-app.post("/card", function(req, res) {
-	var body = req.body;
-	console.log('Requisição recebida: ');
-	console.log(body);
-	if (!body.userid) {
-		res.status(500).send({ error: 'Id não informado.' } );
-		return;
-	};
-	
-	if (!body.password) {
-		res.status(500).send({ error: 'Senha não informada.' } );
-		return;
-	};
-
-	var handleGetCard = function(data, client) {
-		var response = {};
-		response.userid = body.userid;		
-		var strData = data.toString('utf8');
-		var arrData = strData.split(':');				
-		if (arrData.length > 1) {
-			response.num = arrData[0];
-			response.suit = arrData[1];
-		};
-		console.log('Resposta: ');
-		console.log(response);
-		client.res.send(response);	
-	};
-
-	var sendGetCard = function (client) {
-		var sendStr = GET_CARD.format([body.userid, body.password]);
-		console.log('Requisição enviada: ' + sendStr)
-		client.write(sendStr);		
-	};	
-
-	larcClient.sendTCP(body.userid, req, res, handleGetCard, sendGetCard); 	
+app.post("/getcard", function(req, res) {
+	larcAPI.getCard(req, res, larcClient);
 });
 
 app.post("/sendgame", function(req, res) {
-	var body = req.body;
-	console.log('Requisição recebida: ');
-	console.log(body);
-	if (!body.userid) {
-		res.status(500).send({ error: 'Id não informado.' } );
-		return;
-	};
-	
-	if (!body.password) {
-		res.status(500).send({ error: 'Senha não informada.' } );
-		return;
-	};
-
-	if (!body.msg) {
-		res.status(500).send({ error: 'Mensagem não informada.' } );
-		return;
-	};	
-
-	var handleSendGame = function(data, client) {
-		var response = { status: 'ok' };		
-		console.log('handleSendGame.data: ');
-		console.log(data);
-		console.log('Resposta: ');
-		console.log(response);
-		client.res.send(response);	
-	};	
-
-	var sendStr = SEND_GAME.format([body.userid, body.password, body.msg]);
-	console.log('Requisição enviada: ' + sendStr);
-	larcClient.sendUDP(body.userid, req, res, handleSendGame, sendStr);
+	larcAPI.sendGame(req, res, larcClient);
 });

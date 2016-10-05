@@ -30,6 +30,7 @@ module.exports = {
   	sendUDP: function (id, req, res, handler, message) {
 		var client = dgram.createSocket('udp4');
 		initClient(client, req, res, handler);
+		console.log('Requisição enviada ao LARC: ' + message);
 		client.send(message, 0, message.length, 1011, LARC_SERVER, function(err, bytes) {
 		    if (err) {
 		    	throw err;
