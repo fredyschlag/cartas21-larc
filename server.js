@@ -1,6 +1,7 @@
 var express = require('express');
-var bodyParser = require('body-parser')
-var larc = require('./larc-client.js')
+var bodyParser = require('body-parser');
+var larcClient = require('./larc-client.js');
+var larcAPI = require('./larc-api.js');
 var app = express();
 
 String.prototype.format = function (args) {
@@ -26,7 +27,6 @@ String.prototype.format.regex = new RegExp("{-?[0-9]+}", "g");
 app.use(bodyParser.json());       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
-const GET_USERS = 'GET USERS {0}:{1}';
 const GET_MESSAGE = 'GET MESSAGE {0}:{1}';
 const SEND_MESSAGE = 'SEND MESSAGE {0}:{1}:{2}:{3}';
 
@@ -41,45 +41,7 @@ var server = app.listen(1012, function () {
 });
 
 app.post("/users", function(req, res) {
-	var body = req.body;
-	console.log('Requisição recebida: ');
-	console.log(body);
-	if (!body.userid) {
-		res.status(500).send({ error: 'Id não informado.' } );
-		return;
-	};
-	
-	if (!body.password) {
-		res.status(500).send({ error: 'Senha não informada.' } );
-		return;
-	};
-
-	var handleGetUsers = function(data, client) {
-		var response = {};
-		response.userid = body.userid;
-		response.users = [];
-		var strData = data.toString('utf8');
-		var arrData = strData.split(':');				
-		for (; arrData.length > 1;) {
-			var user = {};
-			user.userid = arrData[0];
-			user.username = arrData[1];
-			user.wins = arrData[2];		
-			response.users.push(user);
-			arrData = arrData.slice(3);
-		};
-		console.log('Resposta: ');
-		console.log(response);
-		client.res.send(response);	
-	};
-
-	var sendGetUsers = function (client) {
-		var sendStr = GET_USERS.format([body.userid, body.password]);
-		console.log('Requisição enviada: ' + sendStr)
-		client.write(sendStr);		
-	};	
-
-	larc.sendTCP(body.userid, req, res, handleGetUsers, sendGetUsers); 	
+	larcAPI.getUsers(req, res, larcClient);
 });
 
 app.post("/getmessage", function(req, res) {
@@ -119,7 +81,7 @@ app.post("/getmessage", function(req, res) {
 		client.write(sendStr);		
 	};	
 
-	larc.sendTCP(body.userid, req, res, handleGetMessage, sendGetMessage); 	
+	larcClient.sendTCP(body.userid, req, res, handleGetMessage, sendGetMessage); 	
 });
 
 app.post("/sendmessage", function(req, res) {
@@ -157,7 +119,7 @@ app.post("/sendmessage", function(req, res) {
 
 	var sendStr = SEND_MESSAGE.format([body.userid, body.password, body.targetuserid, body.msg]);
 	console.log('Requisição enviada: ' + sendStr);
-	larc.sendUDP(body.userid, req, res, handleSendMessage, sendStr);
+	larcClient.sendUDP(body.userid, req, res, handleSendMessage, sendStr);
 });
 
 app.post("/players", function(req, res) {
@@ -198,7 +160,7 @@ app.post("/players", function(req, res) {
 		client.write(sendStr);		
 	};	
 
-	larc.sendTCP(body.userid, req, res, handleGetPlayers, sendGetPlayers); 	
+	larcClient.sendTCP(body.userid, req, res, handleGetPlayers, sendGetPlayers); 	
 });
 
 app.post("/card", function(req, res) {
@@ -235,7 +197,7 @@ app.post("/card", function(req, res) {
 		client.write(sendStr);		
 	};	
 
-	larc.sendTCP(body.userid, req, res, handleGetCard, sendGetCard); 	
+	larcClient.sendTCP(body.userid, req, res, handleGetCard, sendGetCard); 	
 });
 
 app.post("/sendgame", function(req, res) {
@@ -268,5 +230,5 @@ app.post("/sendgame", function(req, res) {
 
 	var sendStr = SEND_GAME.format([body.userid, body.password, body.msg]);
 	console.log('Requisição enviada: ' + sendStr);
-	larc.sendUDP(body.userid, req, res, handleSendGame, sendStr);
+	larcClient.sendUDP(body.userid, req, res, handleSendGame, sendStr);
 });
