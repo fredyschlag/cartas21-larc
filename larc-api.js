@@ -55,7 +55,7 @@ module.exports = {
 	getUsers: function (req, res, larcClient) {
 		var body = req.body;
 		var handleResponse = function (data, response) {
-			response.users = [];
+			response.users = [];			
 			var arrData = data.split(':');				
 			for (; arrData.length > 1;) {
 				var user = {};
@@ -64,6 +64,10 @@ module.exports = {
 				user.wins = arrData[2];		
 				response.users.push(user);
 				arrData = arrData.slice(3);
+			};
+
+			if (data.startsWith('Usuário inválido!')) {
+				response.error = 'Usuário inválido.';
 			};
 		};
 

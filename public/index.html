@@ -1,0 +1,28 @@
+<!doctype html>
+<html ng-app="app">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="content-language" content="pt-br" />
+    <title>Jogo de cartas 21</title>
+    <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.min.css" />
+</head>
+
+<body>
+    <!--
+    <ul class="nav nav-tabs">
+        <li ng-class="{active: activetab == '/'}"><a href="#/home">Home</a></li>
+        <li ng-class="{active: activetab == '/sobre'}"><a href="#/sobre">Sobre</a></li>
+        <li ng-class="{active: activetab == '/contato'}"><a href="#/contato">Contato</a></li>
+    </ul>
+    -->
+    <div class="container">
+        <div ng-view></div>
+    </div>
+    <script src="lib/angular/angular.min.js"></script>
+    <script src="lib/angular-route/angular-route.min.js"></script>
+    <script src="app.js"></script>
+    <script src="controllers/controllers.js"></script>
+</body>
+
+</html>

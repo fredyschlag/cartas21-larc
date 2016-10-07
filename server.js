@@ -1,4 +1,5 @@
 var express = require('express');
+var path = require('path');
 var bodyParser = require('body-parser');
 var larcClient = require('./larc-client.js');
 var larcAPI = require('./larc-api.js');
@@ -32,6 +33,13 @@ var server = app.listen(1012, function () {
    var port = server.address().port;
    console.log('Listening at http://%s:%s', host, port)
 });
+
+app.get('/', function(req, res) {
+    res.sendFile(path.join(path.join(__dirname, '/public/index.html')));
+});
+
+app.use('/',express.static(path.join(__dirname, 'public')));
+app.use('/lib',express.static(path.join(__dirname, 'bower_components')));
 
 app.post("/getusers", function(req, res) {
 	larcAPI.getUsers(req, res, larcClient);

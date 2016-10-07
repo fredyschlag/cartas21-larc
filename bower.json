@@ -1,0 +1,24 @@
+{
+  "name": "cartas21",
+  "description": "Jogo de cartas 21",
+  "main": "server.js",
+  "authors": [
+    "Fredy Schlag <fredy.schlag@gmail.com>"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/fredyschlag/cartas21-larc",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "^1.5.8",
+    "jquery": "^3.1.1",
+    "bootstrap": "^3.3.7",
+    "angular-route": "^1.5.8",
+    "font-awesome": "^4.6.3"
+  }
+}
