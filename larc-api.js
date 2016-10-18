@@ -25,15 +25,23 @@ var handleRequest = function (req, res, larcClient, params, request, handleRespo
 		return;
 	};
 
-	var handler = function(data, client) {
+	var handler = function(data, client, error) {
 		var response = {};
 		response.userid = body.userid;
 		if (!udp) {
 			data = data.toString('utf8');
 		};
-		console.log('Resposta do LARC:');
-		console.log(data);
-		handleResponse(data, response);
+		
+		if (error) {
+			console.log('Erro de conexão:');
+			console.log(data);
+			response.error = 'Erro de conexão com o servidor.';
+			response.errorData = data;
+		} else {
+			console.log('Resposta do LARC:');
+			console.log(data);
+			handleResponse(data, response);
+		}
 		console.log('Resposta enviada ao cliente: ');
 		console.log(response);
 		client.res.send(response);

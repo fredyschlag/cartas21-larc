@@ -19,6 +19,10 @@ module.exports = {
 				client.handleRequest(data, client);
 			});
 
+			client.on('error', function (data) {						
+				client.handleRequest(data, client, true);
+			});
+
 			client.connect(1012, LARC_SERVER, function () {		
 				console.log('Client connected: ' + id);
 				clients[id] = client;
