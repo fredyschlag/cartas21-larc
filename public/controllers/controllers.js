@@ -14,7 +14,7 @@ app.controller('LoginCtrl', function($scope, $rootScope, $location, $http) {
         		$scope.error = data.error;
         		$scope.dataLoading = false;        		
         	} else {
-        		$rootScope.userLarc = user;
+        		$rootScope.userLarc = $scope.user;
         		$location.path('/home');
         	}
         }).error(function (data, status, headers, config) {

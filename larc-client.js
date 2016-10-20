@@ -23,6 +23,7 @@ module.exports = {
 				client.handleRequest(data, client, true);
 			});
 
+			console.log('Conenctando-se ao LARC...');
 			client.connect(1012, LARC_SERVER, function () {		
 				console.log('Client connected: ' + id);
 				clients[id] = client;
