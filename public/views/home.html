@@ -1,4 +1,8 @@
 <!-- sobre.html -->
 <div class="page-header">
    <h1>Home!</h1>
+   {{users}}
+   <ul>
+    <li ng-repeat="user in users">{{user.username}}</li>
+    </ul>
 </div>

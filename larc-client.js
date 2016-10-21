@@ -21,6 +21,7 @@ module.exports = {
 
 			client.on('error', function (data) {						
 				client.handleRequest(data, client, true);
+				clients[id] = null;
 			});
 
 			console.log('Conenctando-se ao LARC...');
