@@ -302,7 +302,7 @@ body {
 .container .right .write input {
   font-size: 16px;
   float: left;
-  width: 347px;
+  width: 395px;
   height: 40px;
   padding: 0 10px;
   color: #1a1a1a;
@@ -312,36 +312,15 @@ body {
   font-family: 'Source Sans Pro', sans-serif;
   font-weight: 400;
 }
-.container .right .write .write-link.attach:before {
+.container .right .write .chat-button:before {
   display: inline-block;
   float: left;
-  width: 20px;
-  height: 42px;
-  content: '';
-  background-image: url("http://s1.postimg.org/s5gfy283f/attachemnt.png");
-  background-repeat: no-repeat;
-  background-position: center;
-}
-.container .right .write .write-link.smiley:before {
-  display: inline-block;
-  float: left;
-  width: 20px;
-  height: 42px;
-  content: '';
-  background-image: url("http://s14.postimg.org/q2ug83h7h/smiley.png");
-  background-repeat: no-repeat;
-  background-position: center;
-}
-.container .right .write .write-link.send:before {
-  display: inline-block;
-  float: left;
-  width: 20px;
-  height: 42px;
-  margin-left: 11px;
-  content: '';
-  background-image: url("http://s30.postimg.org/nz9dho0pp/send.png");
-  background-repeat: no-repeat;
-  background-position: center;
+  width: 15px;
+  height: 40px;  
+  font-size: 36px;
+  line-height: 40px;
+  text-align:center;
+  vertical-align: center;
 }
 .container .right .bubble {
   font-size: 16px;
@@ -480,4 +459,10 @@ body {
 .credits a {
   color: white;
   text-decoration: none;
+}
+.chat-button {
+  color: #00b0ff;
+  margin-left: 5px;
+  cursor: pointer;
+  vertical-align: center;
 }

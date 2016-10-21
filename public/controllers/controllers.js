@@ -31,28 +31,40 @@ app.controller('ChatCtrl', function($scope, $rootScope, $location, $http, $timeo
 	console.log('ChatCtrl');
 	if (!$rootScope.userLarc) {
 		$location.path('/login');
+		return;
 	}
 
 	$rootScope.activetab = $location.path();
+	$scope.users = [];
+	$scope.userActive = null;
 
-	$('.chat[data-chat=person2]').addClass('active-chat');
-	$('.person[data-chat=person2]').addClass('active');
+	$scope.addUser = function () {
+		alert('add');
+	};
 
-	$('.left .person').mousedown(function(){
-	    if ($(this).hasClass('.active')) {
+	$(document).on("mousedown", ".left .person", function() {
+		console.log('mousedown');
+	    if ($(this).hasClass('active')) {
 	        return false;
 	    } else {
 	        var findChat = $(this).attr('data-chat');
+	        console.log('findchat');
+			for (j = 0; j < $scope.users.length; j++) {
+				if ($scope.users[j].userid == findChat) {
+					$scope.userActive = $scope.users[j];
+					break;
+				}						
+			}	        
+
 	        var personName = $(this).find('.name').text();
 	        $('.right .top .name').html(personName);
 	        $('.chat').removeClass('active-chat');
 	        $('.left .person').removeClass('active');
 	        $(this).addClass('active');
 	        $('.chat[data-chat = '+findChat+']').addClass('active-chat');
-	    }
+	    }		
 	});
-		    
-    $scope.users = [];
+		        
     var callGetUsers = function () {
 		console.log('callGetUsers');
 		$http.post('getusers', $rootScope.userLarc)
@@ -63,9 +75,22 @@ app.controller('ChatCtrl', function($scope, $rootScope, $location, $http, $timeo
 				$scope.error = data.error;
 			} else {
 				$scope.error = null;
-				$scope.users = data.users;
-			}
 
+				for (i = 0; i < data.users.length; i++) {
+					var found = false;
+					
+					for (j = 0; j < $scope.users.length; j++) {
+						if ($scope.users[j].userid == data.users[i].userid) {
+							found = true;
+							break;
+						}						
+					}
+
+					if (!found) {
+						$scope.users.push(data.users[i]);
+					}
+				}
+			}				
 			$timeout(callGetUsers, 6000); // agenda para executar após 6 segundos
 		}).error(function (data, status, headers, config) {
 			console.log('error');
@@ -75,5 +100,5 @@ app.controller('ChatCtrl', function($scope, $rootScope, $location, $http, $timeo
 		});        			
 	};
 
-    $timeout(callGetUsers(), 6000); // agenda para executar após 6 segundos
+	callGetUsers();
 });

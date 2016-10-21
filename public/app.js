@@ -9,7 +9,7 @@ app.config(function($routeProvider, $locationProvider)
    }).when('/chat', {
       templateUrl : 'views/chat.html',
       controller  : 'ChatCtrl',    
-      css: ['css/chatReset.css', 'css/chatStyle.css']
+      css: ['css/chatReset.css', 'css/chatStyle.css', 'lib/font-awesome/css/font-awesome.min.css']
    }).otherwise ({ 
       redirectTo: '/' 
    });
