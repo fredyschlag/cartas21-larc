@@ -460,9 +460,15 @@ body {
   color: white;
   text-decoration: none;
 }
-.chat-button {
+.chat-button-enabled {
   color: #00b0ff;
   margin-left: 5px;
   cursor: pointer;
+  vertical-align: center;
+}
+.chat-disabled-button {
+  color: #B6B6B6;
+  margin-left: 5px;
+  cursor: not-allowed;
   vertical-align: center;
 }

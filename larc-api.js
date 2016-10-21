@@ -90,7 +90,7 @@ module.exports = {
 		var handleResponse = function (data, response) {
 			response.messages = [];
 			var arrData = data.split(':');				
-			if (arrData.length > 1) {
+			if ((arrData.length > 1) && (arrData[0] != '')){
 				var message = {};
 				message.userid = arrData[0];
 				message.msg = arrData.slice(1).join(':');
