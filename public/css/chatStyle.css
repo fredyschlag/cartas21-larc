@@ -477,3 +477,26 @@ body {
   cursor: not-allowed;
   vertical-align: center;
 }
+.circle-online {
+  float: left;
+  width: 10px;
+  height: 10px;
+  background: #00e600;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  margin-right: 12px;
+  margin-top: 8px;
+}
+
+.circle-offline {
+  float: left;
+  width: 10px;
+  height: 10px;
+  background: #bfbfbf;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  margin-right: 12px;
+  margin-top: 8px;
+}

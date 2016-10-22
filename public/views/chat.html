@@ -7,6 +7,7 @@
             </div>
             <ul class="people">
                 <li ng-repeat="user in users" class="person" data-chat="{{user.userid}}">
+                    <div ng-class="{'circle-online' : user.online, 'circle-offline' : !user.online}"></div>
                     <span class="name">{{user.username}}</span>
                 </li>
             </ul>

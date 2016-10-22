@@ -12,6 +12,8 @@ module.exports = {
 		client.write = function (data) {
 			if (data == 'GET USERS 1000:senha') {
 				handler('1000:Usuário teste:1:1001:Usuário test:0:', client);
+			} else if (data == 'GET MESSAGE 1000:senha') {
+				handler('1000:Usuário teste:1:1001:Usuário test:0:', client);
 			}
 		};
 
