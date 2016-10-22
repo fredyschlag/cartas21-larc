@@ -15,7 +15,7 @@
             <div class="top"><span>Para: <span class="name">{{userActive.username}}</span></span>
             </div>
             <div class="chat active-chat">
-                <div class="chat-messages">
+                <div class="chat-messages" id="chatMessages">
                     <div ng-repeat="message in userActive.messages" ng-class="{'bubble me' : message.me, 'bubble you' : !message.me}">
                         {{message.msg}}
                     </div>

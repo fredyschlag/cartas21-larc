@@ -209,7 +209,7 @@ body {
   position: relative;
   display: none;
   overflow: hidden;
-  padding: 0 35px 92px;
+  padding: 0 0 92px;
   border-width: 1px 1px 1px 0;
   border-style: solid;
   border-color: #e6e6e6;
@@ -225,11 +225,12 @@ body {
 .container .right .chat.active-chat {
   display: block;
   display: -webkit-flex;
-  display: flex;
+  display: flex;  
 }
 .container .right .chat.active-chat .chat-messages {
   overflow-x: hidden;
   overflow-y: auto;
+  padding: 0 35px 0px;
 }
 .container .right .chat.active-chat .bubble {
   -moz-transition-timing-function: cubic-bezier(0.4, -0.04, 1, 1);

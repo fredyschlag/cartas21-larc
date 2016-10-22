@@ -77,6 +77,11 @@ app.controller('ChatCtrl', function($scope, $rootScope, $location, $http, $timeo
         return user;
     }
 
+    var autoScroll = function() {
+      var scroller = document.getElementById("chatMessages");
+      scroller.scrollTop = scroller.scrollHeight;
+    };
+    
     var callGetUsers = function() {
         console.log('callGetUsers');
         $http.post('getusers', $rootScope.userLarc)
@@ -154,7 +159,9 @@ app.controller('ChatCtrl', function($scope, $rootScope, $location, $http, $timeo
                         user.messagesToView++;
 
                         user.messages.push(m);
-                        console.log($scope.userActive);
+                        if (user == $scope.userActive) {
+                        	$timeout(autoScroll, 0, false);
+                        }
                     }
                 }
                 $timeout(callGetMessage, 1000);
@@ -187,6 +194,7 @@ app.controller('ChatCtrl', function($scope, $rootScope, $location, $http, $timeo
                         };
 
                         $scope.userActive.messages.push(message);
+                        $timeout(autoScroll, 0, false);
                     } else {
                         $scope.error = data;
                     }
