@@ -9,7 +9,6 @@ module.exports = {
 		if (clients[id]) {
 			client = clients[id];
 			if (!enqueued) {
-				console.log('enqueue');
 				enqueueRequest(id, req, res, handler, callback, client);
 			}
 

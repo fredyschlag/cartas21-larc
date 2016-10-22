@@ -30,25 +30,34 @@ app.controller('ChatCtrl', function($scope, $rootScope, $location, $http, $timeo
 
     $rootScope.activetab = $location.path();
     $scope.users = [];
+    $rootScope.users = $scope.users;
     $scope.userActive = null;
 
-    $scope.addUser = function() {
+    var addUser = function(id) {
         var user = {};
-        user.userid = $scope.searchUser;
-        user.username = $scope.searchUser;
+        user.userid = id;
+        user.username = id;
+        user.wins = 0;
+        user.messages = [];
+        user.online = false;
+        user.messagesToView = 0;
         $scope.users.push(user);
+        return user;
+    };
+
+    $scope.addUser = function () {
+    	addUser($scope.searchUser);
     };
 
     $(document).on("mousedown", ".left .person", function() {
-        console.log('mousedown');
         if ($(this).hasClass('active')) {
             return false;
         } else {
             var findChat = $(this).attr('data-chat');
-            console.log('findchat');
             for (j = 0; j < $scope.users.length; j++) {
                 if ($scope.users[j].userid == findChat) {
                     $scope.userActive = $scope.users[j];
+                    $scope.userActive.messagesToView = 0;
                     break;
                 }
             }
@@ -64,10 +73,7 @@ app.controller('ChatCtrl', function($scope, $rootScope, $location, $http, $timeo
             }
         }
 
-        var user = {};
-        user.userid = id;
-        user.username = id;
-        $scope.users.push(user);
+        var user = addUser(id);;
         return user;
     }
 
@@ -82,17 +88,38 @@ app.controller('ChatCtrl', function($scope, $rootScope, $location, $http, $timeo
                     $scope.error = null;
 
                     for (i = 0; i < data.users.length; i++) {
-                        var found = false;
+                        var dataUser = data.users[i];
+                        var user = null;
 
                         for (j = 0; j < $scope.users.length; j++) {
                             if ($scope.users[j].userid == data.users[i].userid) {
+                                user = $scope.users[j];
+                                break;
+                            }
+                        }
+
+                        if (user == null) {
+                        	user = addUser(dataUser.userid);                        	
+                        	user.username = dataUser.username;
+                        }
+
+                        user.wins = dataUser.wins;
+                        user.online = true;
+                    }
+
+                    for (i = 0; i < $scope.users.length; i++) {
+                    	var user = $scope.users[i];
+                    	var found = false;
+
+                    	for (j = 0; j < data.users.length; j++) {
+                            if ($scope.users[i].userid == data.users[j].userid) {
                                 found = true;
                                 break;
                             }
                         }
 
                         if (!found) {
-                            $scope.users.push(data.users[i]);
+                        	user.online = false;
                         }
                     }
                 }
@@ -124,6 +151,7 @@ app.controller('ChatCtrl', function($scope, $rootScope, $location, $http, $timeo
                         var m = {};
                         m.msg = message.msg;
                         m.me = false;
+                        user.messagesToView++;
 
                         user.messages.push(m);
                         console.log($scope.userActive);

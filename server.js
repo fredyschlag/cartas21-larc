@@ -1,6 +1,7 @@
 var express = require('express');
 var path = require('path');
 var bodyParser = require('body-parser');
+//var larcClient = require('./larc-client-mock.js');
 var larcClient = require('./larc-client.js');
 var larcAPI = require('./larc-api.js');
 var app = express();

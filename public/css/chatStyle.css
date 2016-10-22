@@ -227,6 +227,10 @@ body {
   display: -webkit-flex;
   display: flex;
 }
+.container .right .chat.active-chat .chat-messages {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
 .container .right .chat.active-chat .bubble {
   -moz-transition-timing-function: cubic-bezier(0.4, -0.04, 1, 1);
   -o-transition-timing-function: cubic-bezier(0.4, -0.04, 1, 1);

@@ -1,3 +1,5 @@
+var iconv = require('iconv-lite');
+
 const GET_USERS = 'GET USERS {0}:{1}';
 const GET_MESSAGE = 'GET MESSAGE {0}:{1}';
 const SEND_MESSAGE = 'SEND MESSAGE {0}:{1}:{2}:{3}';
@@ -46,6 +48,8 @@ var handleRequest = function (req, res, larcClient, params, request, handleRespo
 		console.log(response);
 		client.res.send(response);
 	};
+
+	request = iconv.encode(request, 'utf8');
 
 	var sendRequest = function (client) {
 		console.log('Requisição enviada ao LARC: ' + request);
