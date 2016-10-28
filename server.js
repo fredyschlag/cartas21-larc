@@ -29,7 +29,7 @@ String.prototype.format.regex = new RegExp("{-?[0-9]+}", "g");
 app.use(bodyParser.json());       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
-var server = app.listen(1012, function () {
+var server = app.listen(process.env.PORT || 8080, function () {
    var host = server.address().address;
    var port = server.address().port;
    console.log('Listening at http://%s:%s', host, port)
