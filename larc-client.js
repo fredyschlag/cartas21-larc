@@ -4,7 +4,7 @@ const LARC_SERVER = 'larc.inf.furb.br';
 var clients = [];
 
 module.exports = {
-  	sendTCP: function sendTCP(id, req, res, handler, callback, enqueued) {
+  	sendTCP: function sendTCP(id, req, res, handler, callback, enqueued, queue) {
 		var client = null;
 		if (clients[id]) {
 			client = clients[id];
@@ -20,7 +20,13 @@ module.exports = {
 		} else {
 			client = new net.Socket();
 			client.queue = [];
-			enqueueRequest(id, req, res, handler, callback, client);
+			if (queue == undefined) {
+				client.firstAttempt = true;
+				enqueueRequest(id, req, res, handler, callback, client);
+			} else {
+				client.firstAttempt = false;
+				client.queue = queue;
+			}
 			clients[id] = client;			
 			initClient(client, req, res, handler);
 
@@ -29,19 +35,23 @@ module.exports = {
 				client.queue = client.queue.slice(1);
 				if (client.queue.length > 0) {
 					var request = client.queue[0];
-					console.log('call enqueued');
 					sendTCP(request.id, request.req, request.res, request.handler, request.callback, true);
 				}
 			});
 
-			client.on('error', function (data) {						
-				client.handleRequest(data, client, true);
-				client.queue = client.queue.slice(1);
-				if (client.queue.length > 0) {
-					var request = client.queue[0];				
-					sendTCP(request.id, request.req, request.res, request.handler, request.callback, true);				
+			client.on('error', function (data) {
+				if (!client.firstAttempt) {
+					client.handleRequest(data, client, true);
+					client.queue = client.queue.slice(1);
+					if (client.queue.length > 0) {
+						var request = client.queue[0];				
+						sendTCP(request.id, request.req, request.res, request.handler, request.callback, true);				
+					}
+					clients[id] = null;
+				} else {
+					clients[id] = null;
+					sendTCP(request.id, request.req, request.res, request.handler, request.callback, false, client.queue);				
 				}
-				clients[id] = null;
 			});
 
 			console.log('Conenctando-se ao LARC...');

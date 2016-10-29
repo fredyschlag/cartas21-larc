@@ -1,3 +1,6 @@
+const TIMER_GET_USERS = 6000;
+const TIMER_GET_MESSAGE = 1000;
+
 app.controller('LoginCtrl', function($scope, $rootScope, $location, $http, $timeout) {
     console.log('LoginCtrl');
     $rootScope.activetab = $location.path();
@@ -128,12 +131,12 @@ app.controller('ChatCtrl', function($scope, $rootScope, $location, $http, $timeo
                         }
                     }
                 }
-                $timeout(callGetUsers, 6000); // agenda para executar após 6 segundos
+                $timeout(callGetUsers, TIMER_GET_USERS); // agenda para executar após 6 segundos
             }).error(function(data, status, headers, config) {
                 console.log('error');
                 console.log(data);
                 $scope.error = data;
-                $timeout(callGetUsers, 6000); // agenda para executar após 6 segundos
+                $timeout(callGetUsers, TIMER_GET_USERS); // agenda para executar após 6 segundos
             });
     };
 
@@ -164,12 +167,12 @@ app.controller('ChatCtrl', function($scope, $rootScope, $location, $http, $timeo
                         }
                     }
                 }
-                $timeout(callGetMessage, 1000);
+                $timeout(callGetMessage, TIMER_GET_MESSAGE);
             }).error(function(data, status, headers, config) {
                 console.log('error');
                 console.log(data);
                 $scope.error = data;
-                $timeout(callGetMessage, 1000);
+                $timeout(callGetMessage, TIMER_GET_MESSAGE);
             });
     }
 
