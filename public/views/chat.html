@@ -10,6 +10,7 @@
                     <div ng-class="{'circle-online' : user.online, 'circle-offline' : !user.online}"></div>
                     <span class="name">{{user.username}}</span>
                     <span class="name" ng-show="user.userid == userLarc.userid">(você)</span>
+                    <div ng-show="user.messagesToView > 0" class="numberCircle">{{user.messagesToView}}</div>
                 </li>
             </ul>
         </div>

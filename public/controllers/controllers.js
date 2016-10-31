@@ -162,7 +162,9 @@ app.controller('ChatCtrl', function($scope, $rootScope, $location, $http, $timeo
                         var m = {};
                         m.msg = message.msg;
                         m.me = false;
-                        user.messagesToView++;
+                        if (user != $scope.userActive) {
+                            user.messagesToView++;
+                        }
 
                         user.messages.push(m);
                         if (user == $scope.userActive) {
