@@ -6,9 +6,10 @@
                 <a class="fa fa-plus-circle fa-3x chat-button chat-button-enabled" aria-hidden="true" ng-click="addUser()"></a>
             </div>
             <ul class="people">
-                <li ng-repeat="user in users" class="person" data-chat="{{user.userid}}">
+                <li ng-repeat="user in users | filter: searchUser" class="person" data-chat="{{user.userid}}">
                     <div ng-class="{'circle-online' : user.online, 'circle-offline' : !user.online}"></div>
                     <span class="name">{{user.username}}</span>
+                    <span class="name" ng-show="user.userid == userLarc.userid">(você)</span>
                 </li>
             </ul>
         </div>
@@ -23,7 +24,7 @@
                 </div>
             </div>
             <div class="write">
-                <input type="text" ng-model="textMessage" ng-disabled="userActive == null" />
+                <input type="text" ng-model="textMessage" ng-disabled="userActive == null" ng-keypress="keyMessage($event)" />
                 <a class="fa fa-arrow-circle-right fa-2x chat-button" aria-hidden="true" ng-click="sendMessage()" ng-class="{'chat-button chat-button-enabled' : textMessage, 'chat-button chat-disabled-button' : !textMessage}"></a>
             </div>
         </div>

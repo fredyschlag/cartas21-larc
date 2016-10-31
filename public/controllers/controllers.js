@@ -3,6 +3,7 @@ const TIMER_GET_MESSAGE = 1000;
 
 app.controller('LoginCtrl', function($scope, $rootScope, $location, $http, $timeout) {
     console.log('LoginCtrl');
+    $scope.useUDP = true;
     $rootScope.activetab = $location.path();
 
     $scope.login = function() {
@@ -14,6 +15,7 @@ app.controller('LoginCtrl', function($scope, $rootScope, $location, $http, $time
                     $scope.dataLoading = false;
                 } else {
                     $rootScope.userLarc = $scope.user;
+                    $rootScope.useUDP = $scope.useUDP;
                     $location.path('/chat');
                 }
             }).error(function(data, status, headers, config) {
@@ -33,6 +35,7 @@ app.controller('ChatCtrl', function($scope, $rootScope, $location, $http, $timeo
 
     $rootScope.activetab = $location.path();
     $scope.users = [];
+    $scope.userLarc = $rootScope.userLarc;
     $rootScope.users = $scope.users;
     $scope.userActive = null;
 
@@ -65,7 +68,7 @@ app.controller('ChatCtrl', function($scope, $rootScope, $location, $http, $timeo
                 }
             }
             $('.left .person').removeClass('active');
-            $(this).addClass('active');
+            $(this).addClass('active');            
         }
     });
 
@@ -76,7 +79,7 @@ app.controller('ChatCtrl', function($scope, $rootScope, $location, $http, $timeo
             }
         }
 
-        var user = addUser(id);;
+        var user = addUser(id);
         return user;
     }
 
@@ -107,10 +110,10 @@ app.controller('ChatCtrl', function($scope, $rootScope, $location, $http, $timeo
                         }
 
                         if (user == null) {
-                        	user = addUser(dataUser.userid);                        	
-                        	user.username = dataUser.username;
+                        	user = addUser(dataUser.userid);                        	                        	
                         }
 
+						user.username = dataUser.username;
                         user.wins = dataUser.wins;
                         user.online = true;
                     }
@@ -183,6 +186,7 @@ app.controller('ChatCtrl', function($scope, $rootScope, $location, $http, $timeo
             message.password = $rootScope.userLarc.password;
             message.targetuserid = $scope.userActive.userid;
             message.msg = $scope.textMessage;
+            message.udp = $rootScope.useUDP;
 
             $http.post('sendMessage', message)
                 .success(function(data, status, headers, config) {
@@ -208,6 +212,12 @@ app.controller('ChatCtrl', function($scope, $rootScope, $location, $http, $timeo
                 });
         }
     }
+
+    $scope.keyMessage = function(keyEvent) {
+		if (keyEvent.which === 13) {
+			$scope.sendMessage();
+		}
+	}
 
     callGetUsers();
     callGetMessage();

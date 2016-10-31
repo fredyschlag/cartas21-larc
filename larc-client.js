@@ -31,17 +31,19 @@ module.exports = {
 			initClient(client, req, res, handler);
 
 			client.on('data', function (data) {						
-				client.handleRequest(data, client);
-				client.queue = client.queue.slice(1);
-				if (client.queue.length > 0) {
-					var request = client.queue[0];
-					sendTCP(request.id, request.req, request.res, request.handler, request.callback, true);
+				client.handleResponse(data, client);
+				if (!client.repeating) {
+					client.queue = client.queue.slice(1);
+					if (client.queue.length > 0) {
+						var request = client.queue[0];
+						sendTCP(request.id, request.req, request.res, request.handler, request.callback, true);
+					}
 				}
 			});
 
 			client.on('error', function (data) {
 				if (!client.firstAttempt) {
-					client.handleRequest(data, client, true);
+					client.handleResponse(data, client, true);
 					client.queue = client.queue.slice(1);
 					if (client.queue.length > 0) {
 						var request = client.queue[0];				
@@ -71,16 +73,21 @@ module.exports = {
 		    	throw err;
 		    };
 
-		    client.handleRequest(bytes, client);
+		    client.handleResponse(bytes, client);
 		    client.close();
 		});
+	},
+	repeatRequest: function (client) {
+		console.log('Repeat request');
+		client.repeating = true;
+		client.queue[0].callback(client);
 	}
 };
 
 function initClient(client, req, res, handler) {
 	client.req = req;
 	client.res = res;
-	client.handleRequest = handler;
+	client.handleResponse = handler;
 };
 
 function enqueueRequest(id, req, res, handler, callback, client) {

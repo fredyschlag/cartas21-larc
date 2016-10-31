@@ -29,6 +29,12 @@ var handleRequest = function (req, res, larcClient, params, request, handleRespo
 
 	var handler = function(data, client, error) {
 		var response = {};
+		if (client.repeating) {
+			response = client.responseClient;
+		} else {
+			client.responseClient = response;
+		}
+		
 		response.userid = body.userid;
 		if (!udp) {
 			data = data.toString('utf8');
@@ -42,17 +48,24 @@ var handleRequest = function (req, res, larcClient, params, request, handleRespo
 		} else {
 			console.log('Resposta do LARC:');
 			console.log(data);
-			handleResponse(data, response);
+			handleResponse(data, response, client);
 		}
-		console.log('Resposta enviada ao cliente: ');
-		console.log(response);
-		client.res.send(response);
+
+		if (!client.repeating) {
+			console.log('Resposta enviada ao cliente: ');
+			console.log(response);
+			client.res.send(response);
+		}
 	};
 
 	request = iconv.encode(request, 'utf8');
 
 	var sendRequest = function (client) {
-		console.log('Requisição enviada ao LARC: ' + request);
+		var operation = '(TCP)';
+		if (udp) {
+			operation = '(UDP)';
+		}
+		console.log('Requisição enviada ao LARC ' + operation + ': ' + request);
 		client.write(request);		
 	};	
 
@@ -91,15 +104,21 @@ module.exports = {
 	},
 	getMessage: function (req, res, larcClient) {
 		var body = req.body;
-		var handleResponse = function (data, response) {
-			response.messages = [];
+		var handleResponse = function (data, response, client) {
+			if (response.messages == undefined) {
+				response.messages = [];
+			}
+
 			var arrData = data.split(':');				
 			if ((arrData.length > 1) && (arrData[0] != '')){
 				var message = {};
 				message.userid = arrData[0];
 				message.msg = arrData.slice(1).join(':');
 				response.messages.push(message);
-			};
+				larcClient.repeatRequest(client);
+			} else {
+				client.repeating = false;
+			};			
 		};
 
 		handleRequest(req, res, larcClient, 
@@ -117,8 +136,8 @@ module.exports = {
 		handleRequest(req, res, larcClient, 
 					['userid', 'password', 'targetuserid', 'msg'], 
 					SEND_MESSAGE.format([body.userid, body.password, body.targetuserid, body.msg]),
-					handleResponse,
-					true);		
+					handleResponse
+					,body.udp);		
 	},
 	getPlayers: function (req, res, larcClient) {
 		var body = req.body;
