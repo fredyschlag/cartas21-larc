@@ -3,7 +3,8 @@
         <div class="left">
             <div class="top">
                 <input type="text" ng-model="searchUser" />
-                <a class="fa fa-plus-circle fa-3x chat-button chat-button-enabled" aria-hidden="true" ng-click="addUser()"></a>
+                <a class="fa fa-plus-circle fa-3x" 
+                ng-class="{'chat-button chat-button-enabled' : isValidUser(searchUser), 'chat-button chat-disabled-button' : !isValidUser(searchUser)}" aria-hidden="true" ng-click="addUser()"></a>
             </div>
             <ul class="people">
                 <li ng-repeat="user in users | filter: searchUser" class="person" data-chat="{{user.userid}}">

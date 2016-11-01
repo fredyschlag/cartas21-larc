@@ -41,8 +41,12 @@ app.controller('ChatCtrl', function($scope, $rootScope, $location, $http, $timeo
 
     var addUser = function(id) {
         var user = {};
-        user.userid = id;
-        user.username = id;
+        user.userid = id;                                
+        if (id == 0) {
+            user.username = 'Servidor';
+        } else {
+            user.username = id;        
+        }
         user.wins = 0;
         user.messages = [];
         user.online = false;
@@ -51,8 +55,14 @@ app.controller('ChatCtrl', function($scope, $rootScope, $location, $http, $timeo
         return user;
     };
 
+    $scope.isValidUser = function (id) {
+        return (id && (!isNaN(id)) && (id.length <= 4));
+    }
+
     $scope.addUser = function () {
-    	addUser($scope.searchUser);
+        if ($scope.isValidUser($scope.searchUser)) {
+    	   addUser($scope.searchUser);
+        }
     };
 
     $(document).on("mousedown", ".left .person", function() {
@@ -114,11 +124,6 @@ app.controller('ChatCtrl', function($scope, $rootScope, $location, $http, $timeo
                         }
 
 						user.username = dataUser.username;
-
-                        if (user.username == user.userid) {
-                            user.username = 'Servidor';
-                        }
-                        
                         user.wins = dataUser.wins;
                         user.online = true;
                     }
