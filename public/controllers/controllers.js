@@ -114,6 +114,11 @@ app.controller('ChatCtrl', function($scope, $rootScope, $location, $http, $timeo
                         }
 
 						user.username = dataUser.username;
+
+                        if (user.username == user.userid) {
+                            user.username = 'Servidor';
+                        }
+                        
                         user.wins = dataUser.wins;
                         user.online = true;
                     }

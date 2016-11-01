@@ -52,6 +52,7 @@ module.exports = {
 					clients[id] = null;
 				} else {
 					clients[id] = null;
+					var request = client.queue[0];
 					sendTCP(request.id, request.req, request.res, request.handler, request.callback, false, client.queue);				
 				}
 			});
